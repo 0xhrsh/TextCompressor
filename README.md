@@ -1,2 +1,2 @@
 # TextCompressor
-Compressing text with AI
+Compressing text with AI. CS323 - Course Project.
