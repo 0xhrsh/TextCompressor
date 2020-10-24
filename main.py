@@ -39,6 +39,7 @@ def getMemorySaved(texts):
 def greedyCompress(texts):
     memSaved = getMemorySaved(texts)
     mx = 0
+    bestPhase = ""
 
     for phase in memSaved:
         if(memSaved[phase] > mx):
