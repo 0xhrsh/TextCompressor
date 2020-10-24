@@ -1,46 +1,60 @@
 intSize = 2  # In bytes
 
 
-def getFile():
+def getText():
     f = open("file.txt", "r")
-    s = f.read()
-    n = len(s)
+    text = f.read()
+    n = len(text)
 
-    return s, n
+    return text, n
 
 
-def createHashMap(s):
-    store = {}
-    windowSize = intSize
+def getMemorySaved(texts):
+    count = {}
 
-    while(windowSize < len(s)):
-        for i in range(len(s)-windowSize):
-            phase = s[i:i+windowSize]
-            if len(phase) > intSize:
-                try:
-                    store[phase] += 1
-                except KeyError:
-                    store[phase] = 1
-        windowSize += 1
+    for text in texts:
+        windowSize = intSize
+        while(windowSize < len(text)):
+            for i in range(len(text)-windowSize):
+                phase = text[i:i+windowSize]
+                if len(phase) > intSize:
+                    try:
+                        count[phase] += 1
+                    except KeyError:
+                        count[phase] = 1
+            windowSize += 1
 
-    memoryCompressed = {}
+    memSaved = {}
 
-    for phase in store:
-        memoryCompressed[phase] = store[phase] * \
-            (len(phase) - intSize) - len(phase)
+    for phase in count:
+        memSaved[phase] = count[phase] * (len(phase) - intSize) - len(phase)
 
-    return memoryCompressed
+    return memSaved
+
+
+def greedyCompress(texts):
+    memSaved = getMemorySaved(texts)
+    mx = 0
+
+    for phase in memSaved:
+        if(memSaved[phase] > mx):
+            mx = memSaved[phase]
+            bestPhase = phase
+
+    if mx > 0:
+        print(bestPhase, mx)
+        newTexts = []
+
+        for text in texts:
+            newTexts += text.split(bestPhase)
+
+        return mx + greedyCompress(newTexts)
+
+    return 0
 
 
 if __name__ == "__main__":
-    s, n = getFile()
-    store = createHashMap(s)
+    text, n = getText()
+    memSaved = getMemorySaved(text)
 
-    maxi = 0
-
-    for x in store:
-        if(store[x] > maxi):
-            maxi = store[x]
-            s = x
-
-    print(s, maxi)
+    print(greedyCompress([text]))
