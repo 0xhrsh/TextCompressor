@@ -3,16 +3,18 @@ def getFile():
     s = f.read()
     n = len(s)
 
-    return s,n
+    return s, n
+
 
 def createHashMap(s):
-    store = {} 
+    store = {}
     for word in s.split():
         try:
             store[word] += 1
-        except:
+        except KeyError:
             store[word] = 1
     return store
+
 
 def compress(store, n):
     newLength = n
@@ -25,6 +27,7 @@ def compress(store, n):
     print("Compressed Size of the file:", newLength, "bytes")
     print()
     print("% Compression:", int(10000*(n-newLength)/n)/100, "%")
+
 
 if __name__ == "__main__":
     s, n = getFile()
