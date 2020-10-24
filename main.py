@@ -1,3 +1,5 @@
+import operator
+
 intSize = 2  # In bytes
 
 
@@ -27,7 +29,9 @@ def getMemorySaved(texts):
     memSaved = {}
 
     for phase in count:
-        memSaved[phase] = count[phase] * (len(phase) - intSize) - len(phase)
+        if count[phase] * (len(phase) - intSize) - len(phase) > 0:
+            memSaved[phase] = count[phase] * \
+                (len(phase) - intSize) - len(phase)
 
     return memSaved
 
@@ -42,7 +46,6 @@ def greedyCompress(texts):
             bestPhase = phase
 
     if mx > 0:
-        print(bestPhase, mx)
         newTexts = []
 
         for text in texts:
@@ -53,8 +56,31 @@ def greedyCompress(texts):
     return 0
 
 
+def gdfsCompress(texts, b):
+    memSaved = getMemorySaved(texts)
+    b = max(b, 1)
+    branchingFactor = min(b, len(memSaved))
+
+    topMemorySavers = dict(sorted(memSaved.items(
+    ), key=operator.itemgetter(1), reverse=True)[:branchingFactor])
+
+    mostSaved = 0
+
+    for phase in topMemorySavers:
+        newTexts = []
+        for text in texts:
+            newTexts += text.split(phase)
+
+        mostSaved = max(
+            mostSaved, topMemorySavers[phase] + gdfsCompress(newTexts, b-1))
+
+    return mostSaved
+
+
 if __name__ == "__main__":
     text, n = getText()
     memSaved = getMemorySaved(text)
 
-    print(greedyCompress([text]))
+    print("% Compression using Greedy:", int(10000*greedyCompress([text])/n)/100, "%")
+
+    print("% Compression using Greedy-DFS:", int(10000*gdfsCompress([text], 5)/n)/100, "%")
