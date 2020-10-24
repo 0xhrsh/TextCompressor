@@ -81,6 +81,8 @@ if __name__ == "__main__":
     text, n = getText()
     memSaved = getMemorySaved(text)
 
-    print("% Compression using Greedy:", int(10000*greedyCompress([text])/n)/100, "%")
+    print("% Compression using Greedy:", int(
+        10000*greedyCompress([text])/n)/100, "%")
 
-    print("% Compression using Greedy-DFS:", int(10000*gdfsCompress([text], 5)/n)/100, "%")
+    print("% Compression using Greedy-DFS:",
+          int(10000*gdfsCompress([text], 5)/n)/100, "%")
