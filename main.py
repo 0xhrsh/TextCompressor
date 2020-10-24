@@ -1,3 +1,6 @@
+intSize = 2  # In bytes
+
+
 def getFile():
     f = open("file.txt", "r")
     s = f.read()
@@ -8,29 +11,36 @@ def getFile():
 
 def createHashMap(s):
     store = {}
-    for word in s.split():
-        try:
-            store[word] += 1
-        except KeyError:
-            store[word] = 1
-    return store
+    windowSize = intSize
 
+    while(windowSize < len(s)):
+        for i in range(len(s)-windowSize):
+            phase = s[i:i+windowSize]
+            if len(phase) > intSize:
+                try:
+                    store[phase] += 1
+                except KeyError:
+                    store[phase] = 1
+        windowSize += 1
 
-def compress(store, n):
-    newLength = n
+    memoryCompressed = {}
 
-    for word in store:
-        if len(word)*store[word] > 4:
-            newLength -= len(word)*store[word] - 4
+    for phase in store:
+        memoryCompressed[phase] = store[phase] * \
+            (len(phase) - intSize) - len(phase)
 
-    print("Original Size of the file:", n, "bytes")
-    print("Compressed Size of the file:", newLength, "bytes")
-    print()
-    print("% Compression:", int(10000*(n-newLength)/n)/100, "%")
+    return memoryCompressed
 
 
 if __name__ == "__main__":
     s, n = getFile()
     store = createHashMap(s)
 
-    compress(store, n)
+    maxi = 0
+
+    for x in store:
+        if(store[x] > maxi):
+            maxi = store[x]
+            s = x
+
+    print(s, maxi)
