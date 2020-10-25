@@ -53,7 +53,7 @@ def greedyCompress(texts):
             newTexts += text.split(bestPhase)
 
         saved, phases = greedyCompress(newTexts)
-        
+
         return mx + saved, phases + [bestPhase]
 
     return 0, []
