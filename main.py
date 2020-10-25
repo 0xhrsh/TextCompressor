@@ -7,7 +7,7 @@ def getText():
     f = open("file.txt", "r")
     text = f.read()
     n = len(text)
-
+    print("File read successfull.\nWords Read:", n)
     return text, n
 
 
@@ -84,7 +84,6 @@ def gdfsCompress(texts, b):
 
 if __name__ == "__main__":
     text, n = getText()
-    memSaved = getMemorySaved(text)
 
     print("% Compression using Greedy:", int(
         10000*greedyCompress([text])/n)/100, "%")
