@@ -18,20 +18,20 @@ def getMemorySaved(texts):
         windowSize = intSize
         while(windowSize < 20):
             for i in range(len(text)-windowSize):
-                phase = text[i:i+windowSize]
-                if len(phase) > intSize:
+                phrase = text[i:i+windowSize]
+                if len(phrase) > intSize:
                     try:
-                        count[phase] += 1
+                        count[phrase] += 1
                     except KeyError:
-                        count[phase] = 1
+                        count[phrase] = 1
             windowSize += 1
 
     memSaved = {}
 
-    for phase in count:
-        if count[phase] * (len(phase) - intSize) - len(phase) > 0:
-            memSaved[phase] = count[phase] * \
-                (len(phase) - intSize) - len(phase)
+    for phrase in count:
+        if count[phrase] * (len(phrase) - intSize) - len(phrase) > 0:
+            memSaved[phrase] = count[phrase] * \
+                (len(phrase) - intSize) - len(phrase)
 
     return memSaved
 
@@ -39,22 +39,22 @@ def getMemorySaved(texts):
 def greedyCompress(texts):
     memSaved = getMemorySaved(texts)
     mx = 0
-    bestPhase = ""
+    bestPhrase = ""
 
-    for phase in memSaved:
-        if(memSaved[phase] > mx):
-            mx = memSaved[phase]
-            bestPhase = phase
+    for phrase in memSaved:
+        if(memSaved[phrase] > mx):
+            mx = memSaved[phrase]
+            bestPhrase = phrase
 
     if mx > 0:
         newTexts = []
 
         for text in texts:
-            newTexts += text.split(bestPhase)
+            newTexts += text.split(bestPhrase)
 
-        saved, phases = greedyCompress(newTexts)
+        saved, phrases = greedyCompress(newTexts)
 
-        return mx + saved, phases + [bestPhase]
+        return mx + saved, phrases + [bestPhrase]
 
     return 0, []
 
@@ -71,32 +71,32 @@ def gdfsCompress(texts, b):
     ), key=operator.itemgetter(1), reverse=True)[:branchingFactor])
 
     mostSaved = 0
-    bestPhases = []
+    bestPhrases = []
 
-    for phase in topMemorySavers:
+    for phrase in topMemorySavers:
         newTexts = []
         for text in texts:
-            newTexts += text.split(phase)
+            newTexts += text.split(phrase)
 
-        saved, phases = gdfsCompress(newTexts, b-1)
+        saved, phrases = gdfsCompress(newTexts, b-1)
 
-        if mostSaved < topMemorySavers[phase] + saved:
-            mostSaved = topMemorySavers[phase] + saved
-            bestPhases = phases + [phase]
+        if mostSaved < topMemorySavers[phrase] + saved:
+            mostSaved = topMemorySavers[phrase] + saved
+            bestPhrases = phrases + [phrase]
 
-    return mostSaved, bestPhases
+    return mostSaved, bestPhrases
 
 
 if __name__ == "__main__":
     text, n = getText()
 
-    bytesSaved, phasesCompressed = greedyCompress([text])
+    bytesSaved, phrasesCompressed = greedyCompress([text])
 
     print("Compression using Greedy:", int(
         10000*bytesSaved/n)/100, "%")
-    print("Total Phases Compressed", len(phasesCompressed))
+    print("Total Phrases Compressed", len(phrasesCompressed))
 
-    bytesSaved, phasesCompressed = gdfsCompress([text], 4)
+    bytesSaved, phrasesCompressed = gdfsCompress([text], 4)
 
     print("Compression using Greedy-DFS:", int(10000*bytesSaved/n)/100, "%")
-    print("Total Phases Compressed", len(phasesCompressed))
+    print("Total Phrases Compressed", len(phrasesCompressed))
