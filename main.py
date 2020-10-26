@@ -1,10 +1,12 @@
 import operator
+import time
 
-intSize = 2  # In bytes
+intSize = 1  # In bytes
 
 
 def getText():
-    f = open("file.txt", "r")
+    f = open("to-kill-a-mockingbird.txt", "r")
+
     text = f.read()
     n = len(text)
     print("File read successfull.\nWords Read:", n)
@@ -16,8 +18,8 @@ def getMemorySaved(texts):
 
     for text in texts:
         windowSize = intSize
-        while(windowSize < 20):
-            for i in range(len(text)-windowSize):
+        while(windowSize < 15):
+            for i in range(len(text)-windowSize+1):
                 phrase = text[i:i+windowSize]
                 if len(phrase) > intSize:
                     try:
@@ -36,7 +38,7 @@ def getMemorySaved(texts):
     return memSaved
 
 
-def greedyCompress(texts):
+def greedyCompress(texts, n):
     memSaved = getMemorySaved(texts)
     mx = 0
     bestPhrase = ""
@@ -52,7 +54,7 @@ def greedyCompress(texts):
         for text in texts:
             newTexts += text.split(bestPhrase)
 
-        saved, phrases = greedyCompress(newTexts)
+        saved, phrases = greedyCompress(newTexts, n+1)
 
         return mx + saved, phrases + [bestPhrase]
 
@@ -63,7 +65,7 @@ def gdfsCompress(texts, b):
     memSaved = getMemorySaved(texts)
 
     if b == 1:
-        return greedyCompress(texts)
+        return greedyCompress(texts, 0)
 
     branchingFactor = min(b, len(memSaved))
 
@@ -90,13 +92,20 @@ def gdfsCompress(texts, b):
 if __name__ == "__main__":
     text, n = getText()
 
-    bytesSaved, phrasesCompressed = greedyCompress([text])
+    start = time.time()
+    bytesSaved, phrasesCompressed = greedyCompress([text], 0)
+    end = time.time()
 
-    print("Compression using Greedy:", int(
-        10000*bytesSaved/n)/100, "%")
+    print("Compression using Greedy:", int(10000*bytesSaved/n)/100, "%")
     print("Total Phrases Compressed", len(phrasesCompressed))
+    print("Time taken by Greedy:", end-start, "Seconds")
+    print(phrasesCompressed)
 
+    start = time.time()
     bytesSaved, phrasesCompressed = gdfsCompress([text], 4)
+    end = time.time()
 
-    print("Compression using Greedy-DFS:", int(10000*bytesSaved/n)/100, "%")
+    print("Compression using GDFS:", int(10000*bytesSaved/n)/100, "%")
     print("Total Phrases Compressed", len(phrasesCompressed))
+    print("Time taken by GDFS:", end-start, "Seconds")
+    print(phrasesCompressed)
