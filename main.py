@@ -13,7 +13,8 @@ def getText():
     return text, n
 
 
-def getMemorySaved(texts): # Heuristic Function (tells which phrase will lead to how much size reduction)
+# Heuristic Function (tells which phrase will lead to how much size reduction)
+def getMemorySaved(texts):
     count = {}
 
     for text in texts:
@@ -65,7 +66,8 @@ def gdfsaCompress(texts, b):
     memSaved = getMemorySaved(texts)
 
     if b == 1:
-        return greedyCompress(texts, 0) # If branching factor is 1, GDFS becomes greedy
+        # If branching factor is 1, GDFS becomes greedy
+        return greedyCompress(texts, 0)
 
     branchingFactor = min(b, len(memSaved))
 
